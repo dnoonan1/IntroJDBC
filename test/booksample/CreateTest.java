@@ -20,7 +20,7 @@ public class CreateTest {
         
         db.openConnection();
         
-        List<Map<String,Object>> records = db.getAllRecords("book");
+        List<Map<String,Object>> records = db.getAllRecords("author");
         
         for (Map record : records) {
             System.out.println(record);
@@ -28,10 +28,10 @@ public class CreateTest {
         
         System.out.println("\nCreating new record...");
         
-        List<String> columns = Arrays.asList("title", "pub_date");
-        List values = Arrays.asList("I Need a Title", "2015-01-01");
+        List<String> columns = Arrays.asList("author_name", "date_added");
+        List values = Arrays.asList("Nick Nobody", "2015-01-03");
         
-        boolean success = db.insertRecord("book", columns, values);
+        boolean success = db.insertRecord("author", columns, values);
         
         if (success) {
             System.out.println("Record created.");
@@ -39,7 +39,7 @@ public class CreateTest {
             System.out.println("Record NOT created.");
         }
         
-        records = db.getAllRecords("book");
+        records = db.getAllRecords("author");
         for (Map record : records) {
             System.out.println(record);
         }

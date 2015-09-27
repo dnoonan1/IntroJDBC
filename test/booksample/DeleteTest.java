@@ -19,7 +19,7 @@ public class DeleteTest {
         
         db.openConnection();
         
-        List<Map<String,Object>> records = db.getAllRecords("book");
+        List<Map<String,Object>> records = db.getAllRecords("author");
         
         for (Map record : records) {
             System.out.println(record);
@@ -27,7 +27,7 @@ public class DeleteTest {
         
         System.out.println("\nDeleting record...");
         
-        boolean success = db.psDeleteByPrimaryKey("book", "book_id", 3);
+        boolean success = db.deleteByPrimaryKey("author", "author_id", 3);
         
         if (success) {
             System.out.println("Record deleted.");
@@ -35,7 +35,7 @@ public class DeleteTest {
             System.out.println("Record NOT deleted.");
         }
         
-        records = db.getAllRecords("book");
+        records = db.getAllRecords("author");
         for (Map record : records) {
             System.out.println(record);
         }

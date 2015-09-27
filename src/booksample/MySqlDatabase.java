@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * @author dnoonan1
  */
-public class MySqlDatabase {
+public class MySqlDatabase implements Database {
     
     // Will this ever change?
     private static final String driverClassName = "com.mysql.jdbc.Driver";
@@ -20,8 +20,6 @@ public class MySqlDatabase {
     private static final int SUCCESS = 1;
     
     // SQL constants
-    private static final String SELECT = "SELECT ";
-    private static final String FROM = " FROM ";
     private static final String SELECT_ALL_FROM = "SELECT * FROM ";
     private static final String INSERT_INTO = "INSERT INTO ";
     private static final char BEGIN_LIST = '(';
@@ -49,10 +47,12 @@ public class MySqlDatabase {
         closeConnection();
     }
     
+    @Override
     public final void openConnection() throws SQLException  {
         conn = DriverManager.getConnection(url, userName, password);
     }
     
+    @Override
     public final void closeConnection() throws SQLException {
         conn.close();
     }
@@ -63,6 +63,7 @@ public class MySqlDatabase {
     
     /* CRUD - Create (INSERT) */
     
+    @Override
     public final boolean insertRecord(String tableName,
             List<String> columnNames, List columnValues) 
             throws SQLException {
@@ -77,15 +78,12 @@ public class MySqlDatabase {
     
     /* CRUD - Retrieve (SELECT) */
     
+    @Override
     public final List<Map<String,Object>> getAllRecords(String tableName)
             throws SQLException {
         List<Map<String,Object>> records = new ArrayList<>();
         
         String sql = SELECT_ALL_FROM + tableName + SEMICOLON;        
-                
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
          
         try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
@@ -105,16 +103,13 @@ public class MySqlDatabase {
         
     }
     
-    public Map<String, Object> getRecordByPrimaryKey(String tableName,
+    @Override
+    public Map<String, Object> getByPrimaryKey(String tableName,
             String primaryKeyName, Object primaryKeyValue)
             throws SQLException {
         
         String sql = SELECT_ALL_FROM + tableName
                 + WHERE + primaryKeyName + EQUALS + PARAMETER + SEMICOLON;
-        
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
             
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setObject(1, primaryKeyValue);
@@ -137,6 +132,7 @@ public class MySqlDatabase {
     
     /* CRUD - Update */
     
+    @Override
     public boolean updateRecord(String tableName,
             List<String> columnNames, List columnValues,
             String whereField, Object whereValue) throws SQLException {
@@ -158,42 +154,41 @@ public class MySqlDatabase {
     
     /* CRUD - Delete */
     
+    // Statement
+//    public boolean deleteByPrimaryKey(String tableName, String primaryKeyName,
+//            Object primaryKeyValue) throws SQLException {
+//        
+//        boolean recordDeleted;
+//        String sql = DELETE_FROM + tableName
+//                + WHERE + primaryKeyName + EQUALS;
+//        
+//        if (primaryKeyValue instanceof String) {
+//            sql += "'" + primaryKeyValue + "'";
+//        } else {
+//            sql += primaryKeyValue;
+//        }
+//        sql += SEMICOLON;
+//                        
+//            // *** FOR TESTING PURPOSES ***
+//            System.out.println('\n' + sql + '\n');
+//            // *** DELETE AFTER TESTING ***
+//        
+//        try (Statement stmt = conn.createStatement()) {
+//            recordDeleted = stmt.executeUpdate(sql) == SUCCESS;
+//            return recordDeleted;
+//        } catch (SQLException e) {
+//            throw e;
+//        }
+//    }
+    
+    // Prepared Statement
+    @Override
     public boolean deleteByPrimaryKey(String tableName, String primaryKeyName,
             Object primaryKeyValue) throws SQLException {
         
         boolean recordDeleted;
         String sql = DELETE_FROM + tableName
-                + WHERE + primaryKeyName + EQUALS;
-        
-        if (primaryKeyValue instanceof String) {
-            sql += "'" + primaryKeyValue + "'";
-        } else {
-            sql += primaryKeyValue;
-        }
-        sql += SEMICOLON;
-                        
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
-        
-        try (Statement stmt = conn.createStatement()) {
-            recordDeleted = stmt.executeUpdate(sql) == SUCCESS;
-            return recordDeleted;
-        } catch (SQLException e) {
-            throw e;
-        }
-    }
-    
-    public boolean psDeleteByPrimaryKey(String tableName, String primaryKeyName,
-            Object primaryKeyValue) throws SQLException {
-        
-        boolean recordDeleted;
-        String sql = DELETE_FROM + tableName
                 + WHERE + primaryKeyName + EQUALS + PARAMETER + SEMICOLON;
-                
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setObject(1, primaryKeyValue);
@@ -223,10 +218,6 @@ public class MySqlDatabase {
         }
         sb.append(END_LIST).append(SEMICOLON);
         String sql = sb.toString();
-        
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
             
         return conn.prepareStatement(sql);
     }
@@ -250,12 +241,7 @@ public class MySqlDatabase {
         sb.append(WHERE).append(whereField).append(EQUALS).append(PARAMETER)
                 .append(SEMICOLON);
         
-        sql = sb.toString();
-        
-            // *** FOR TESTING PURPOSES ***
-            System.out.println('\n' + sql + '\n');
-            // *** DELETE AFTER TESTING ***
-        
+        sql = sb.toString();       
         return conn.prepareStatement(sql);
     }
     

@@ -19,17 +19,17 @@ public class RetrieveTest {
         
         db.openConnection();
         
-        List<Map<String,Object>> records = db.getAllRecords("book");
+        List<Map<String,Object>> records = db.getAllRecords("author");
         
         for (Map record : records) {
             System.out.println(record);
         }
         
-        System.out.println("Finding book by ID...");
+        System.out.println("Finding author by ID...");
         
-        Map<String, Object> record = db.getRecordByPrimaryKey("book", "book_id", 3);
+        Map<String, Object> record = db.getByPrimaryKey("author", "author_id", 1);
         if (record == null) {
-            System.out.println("Book not found.");
+            System.out.println("Author not found.");
         } else {
             System.out.println(record);
         }

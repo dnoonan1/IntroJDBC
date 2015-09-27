@@ -20,7 +20,7 @@ public class UpdateTest {
         
         db.openConnection();
         
-        List<Map<String,Object>> records = db.getAllRecords("book");
+        List<Map<String,Object>> records = db.getAllRecords("author");
         
         for (Map record : records) {
             System.out.println(record);
@@ -28,18 +28,18 @@ public class UpdateTest {
         
         System.out.println("\nUpdating record...");
         
-        List<String> columns = Arrays.asList("book_id", "title", "pub_date");
-        List values = Arrays.asList(3, "I Now Have a Title!", "2015-01-01");
+        List<String> columns = Arrays.asList("author_id", "author_name", "date_added");
+        List values = Arrays.asList(3, "Nick Somebody", "2015-11-01");
         
-        boolean success = db.updateRecord("book", columns, values, "book_id", 5);
+        boolean success = db.updateRecord("author", columns, values, "author_id", 3);
         
         if (success) {
-            System.out.println("Record deleted.");
+            System.out.println("Record updated.");
         } else {
-            System.out.println("Record NOT deleted.");
+            System.out.println("Record NOT updated.");
         }
         
-        records = db.getAllRecords("book");
+        records = db.getAllRecords("author");
         for (Map record : records) {
             System.out.println(record);
         }
